@@ -42,6 +42,23 @@ Every time you upload a change to the repository, Render rebuilds and redeploys 
 visit wakes it up, which takes about a minute; the page shows a "waking up" message meanwhile.
 After that, each solve takes about a second.
 
+## Lecture mode (for teaching)
+
+After solving a system, press **Lecture mode** in the Result card. The solution then plays like
+slides, one calculation per step, in large type for a projector:
+
+- Each step shows the matrices with the value **being computed** in solid blue and the values
+  **used** in that step outlined, plus the formula with the numbers substituted.
+- **Pause before answers** (eye button, or **R**) hides each result behind a **?** so the class can
+  work it out first. Press **Next** once to show the answer, and again to move on.
+- **Teaching notes** (light-bulb button, or **N**) show a one-line explanation of each step.
+- The **step list** on the left (or **O**) jumps to any step.
+- Keys: **→ / Space / Page Down** next, **← / Page Up** back, **Home / End**, **+ / −** text size,
+  **F** full screen, **Esc** close. Presentation clickers that send Page Down / Page Up also work.
+
+Lecture mode does no calculations of its own: every number on its slides is copied from the
+printout of the MATLAB solver code.
+
 ## Run it on your own computer
 
 - **With Docker Desktop:**

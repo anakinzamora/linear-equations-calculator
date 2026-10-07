@@ -311,13 +311,144 @@ code { font-family: var(--mono); font-size: .92em; }
   .steps { padding: 6px 16px 20px; }
   .intro h1 { font-size: 24px; line-height: 32px; }
 }
+/* ---------- lecture mode ---------- */
+html.lec-open, html.lec-open body { overflow: hidden; }
+.lec { position: fixed; inset: 0; z-index: 50; background: var(--canvas); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; --ls: 1; color: var(--text); }
+.lec:focus { outline: none; }
+.lec:fullscreen { background: var(--canvas); }
+.lec-bar { display: flex; align-items: center; gap: 16px; padding: calc(env(safe-area-inset-top, 0px) + 8px) 16px 8px; background: var(--surface); border-bottom: 1px solid var(--stroke); }
+.lec-id { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 0; }
+.lec-code { font: 600 12px/16px var(--font); color: var(--brand-fg); background: var(--brand-subtle); border: 1px solid var(--brand-stroke); padding: 3px 8px; border-radius: 4px; flex: none; }
+.lec-method { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lec-prog { flex: 0 1 280px; display: grid; gap: 4px; font-size: 12px; line-height: 16px; color: var(--text-3); text-align: center; font-variant-numeric: tabular-nums; }
+.lec-track { height: 4px; background: var(--surface-3); border-radius: 2px; overflow: hidden; }
+.lec-fill { height: 100%; width: 0; background: var(--brand); transition: width .2s var(--ease); }
+.lec-tools { flex: 1 1 0; display: flex; justify-content: flex-end; gap: 2px; }
+.lec-tools .btn-icon { width: 36px; height: 36px; border-radius: 4px; }
+.lec-tools .btn-icon[aria-pressed="true"] { background: var(--brand-subtle); color: var(--brand-fg); }
+.lec-body { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: 0; position: relative; }
+.lec.no-outline .lec-body { grid-template-columns: minmax(0, 1fr); }
+.lec.no-outline .lec-outline { display: none; }
+.lec-outline { overflow: auto; border-right: 1px solid var(--stroke); background: var(--surface); padding: 6px 8px 24px; min-height: 0; }
+.lo-group { font-size: 11px; line-height: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-3); padding: 14px 8px 4px; }
+.lec-outline ol { list-style: none; margin: 0; padding: 0; }
+.lo-item { width: 100%; display: flex; gap: 8px; align-items: baseline; text-align: left; border: 0; background: transparent; padding: 5px 8px; border-radius: 4px; cursor: pointer; color: var(--text-2); font-size: 13px; line-height: 18px; }
+.lo-item:hover { background: var(--hover); color: var(--text); }
+.lo-item.on { background: var(--brand-subtle); color: var(--text); font-weight: 600; }
+.lo-n { font-size: 11px; color: var(--text-4); min-width: 22px; font-variant-numeric: tabular-nums; }
+.lec-stage { overflow: auto; padding: 28px 28px 40px; min-height: 0; }
+.lec-inner { max-width: 1280px; margin: 0 auto; display: grid; gap: calc(16px * var(--ls)); font-size: calc(18px * var(--ls)); line-height: 1.45; }
+.lec-group { font-size: .68em; font-weight: 600; color: var(--brand-fg); text-transform: uppercase; letter-spacing: .06em; }
+.lec-title { margin: -6px 0 0; font: 600 1.65em/1.2 var(--font-display); letter-spacing: -.01em; text-wrap: balance; }
+.lec-kicker { margin: -8px 0 0; color: var(--text-3); font-size: .95em; }
+.lec-visual { display: grid; gap: 1em; min-width: 0; }
+.lvis { display: flex; flex-wrap: wrap; gap: .8em 1.4em; align-items: center; min-width: 0; }
+.lec var { font-style: italic; }
+
+.lm { margin: 0; max-width: 100%; }
+.lm figcaption { font-size: .72em; font-weight: 600; color: var(--text-3); margin-bottom: .3em; }
+.lm-wrap { display: inline-flex; gap: .5em; align-items: stretch; max-width: 100%; overflow-x: auto; }
+.lm-body { display: inline-grid; grid-template-columns: repeat(var(--cols), auto); gap: .22em .28em; padding: .32em .6em; position: relative; font-family: var(--mono); font-size: .88em; font-variant-numeric: tabular-nums; }
+.lm-body::before, .lm-body::after { content: ""; position: absolute; top: 0; bottom: 0; width: .4em; border: 2px solid var(--text-3); }
+.lm-body::before { left: 0; border-right: 0; border-radius: 3px 0 0 3px; }
+.lm-body::after { right: 0; border-left: 0; border-radius: 0 3px 3px 0; }
+.lm-names { display: grid; gap: .22em; padding-block: .32em; font-size: .88em; color: var(--text-3); }
+.lm-names span { padding: .18em 0; line-height: 1.45; }
+.c { min-width: 4.4em; padding: .18em .5em; text-align: right; border-radius: 4px; line-height: 1.45; min-height: calc(1.45em + .36em); transition: background-color .15s var(--ease); }
+.c.aug { margin-left: .7em; position: relative; }
+.c.aug::before { content: ""; position: absolute; left: -.5em; top: -.15em; bottom: -.15em; border-left: 1.5px dashed var(--stroke-acc); }
+.c.blank { box-shadow: inset 0 0 0 1px var(--stroke-strong); background: repeating-linear-gradient(135deg, transparent 0 6px, var(--surface-3) 6px 7px); }
+.c.fixed { color: var(--text-4); }
+.c.target { background: var(--surface-3); }
+.c.from { background: var(--surface-3); color: var(--text-3); }
+.c.ref { background: var(--brand-subtle); box-shadow: inset 0 0 0 1.5px var(--brand-stroke); color: var(--text); }
+.c.col { background: var(--warn-bg); box-shadow: inset 0 0 0 1.5px var(--warn-stroke); }
+.c.cur { background: var(--brand); color: var(--on-brand); font-weight: 700; box-shadow: none; }
+.c.pivot { box-shadow: 0 0 0 2px var(--brand-fg); border-radius: 999px; }
+.c.cur.pivot { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--brand-fg); }
+.c.ans { background: var(--ok-bg); color: var(--ok-fg); font-weight: 700; }
+.lop { font-size: 1.6em; color: var(--text-3); line-height: 1; padding-top: .6em; }
+.llegend { display: flex; flex-wrap: wrap; gap: .3em 1.2em; font-size: .62em; color: var(--text-3); margin-top: -.3em; }
+.llegend .sw { display: inline-block; width: 1.05em; height: 1.05em; border-radius: 3px; vertical-align: -.18em; margin-right: .45em; }
+.sw.cur { background: var(--brand); }
+.sw.ref { background: var(--brand-subtle); box-shadow: inset 0 0 0 1.5px var(--brand-stroke); }
+.sw.col { background: var(--warn-bg); box-shadow: inset 0 0 0 1.5px var(--warn-stroke); }
+.sw.pivot { box-shadow: inset 0 0 0 2px var(--brand-fg); border-radius: 50%; }
+.sw.target, .sw.from { background: var(--surface-3); }
+.sw.ans { background: var(--ok-bg); box-shadow: inset 0 0 0 1.5px var(--ok-stroke); }
+
+.lcalc { background: var(--surface); border: 1px solid var(--stroke); border-radius: 8px; padding: .75em 1.1em; display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: .2em .55em; font-family: var(--mono); font-size: 1.05em; overflow-x: auto; box-shadow: var(--shadow-2); align-items: baseline; }
+.lcalc.multi { font-size: .9em; gap: .45em .55em; }
+.lc-row { display: contents; }
+.lc-lhs { text-align: right; font-weight: 600; white-space: nowrap; }
+.lc-eq { color: var(--text-3); }
+.lc-rhs { white-space: nowrap; }
+.lres { font-weight: 700; color: var(--brand-fg); font-size: 1.12em; }
+.lq { display: inline-block; min-width: 2.4em; text-align: center; font-weight: 700; color: var(--on-brand); background: var(--brand); border-radius: 4px; padding: 0 .45em; }
+.v-new { color: var(--brand-fg); font-weight: 600; }
+.v-old { color: var(--text-3); }
+
+.leqs { margin: 0; padding-left: 2.2em; display: grid; gap: .25em; font-size: 1.25em; }
+.leqs li::marker { color: var(--text-4); font-size: .75em; }
+.lidea { font-size: 1.12em; max-width: 62ch; margin: 0; }
+.lformulas { font-family: var(--mono); font-size: .82em; background: var(--surface-2); border: 1px solid var(--stroke); border-radius: 6px; padding: .65em .95em; display: grid; gap: .35em; overflow-x: auto; white-space: nowrap; max-width: 100%; }
+.lformulas.big { font-size: .95em; }
+.lsmall { font-family: var(--mono); font-size: .66em; color: var(--text-3); display: grid; gap: .2em; }
+.lmsg { font-size: .85em; }
+.ltiles { display: flex; flex-wrap: wrap; gap: .6em; }
+.ltile { border: 1px solid var(--ok-stroke); background: var(--ok-bg); border-radius: 8px; padding: .5em 1.1em .7em; min-width: 7em; }
+.ltile .k { font-size: .78em; color: var(--text-3); }
+.ltile .v { font: 700 1.9em/1.15 var(--font-display); font-variant-numeric: tabular-nums; }
+.lfrac { display: inline-grid; justify-items: center; gap: .35em; font-family: var(--mono); font-size: 1.25em; padding: .3em 0; }
+.lfrac .fbar { width: 100%; height: 2px; background: var(--text); }
+.lfrac .fl { color: var(--text-3); font-size: .7em; margin-right: .6em; font-family: var(--font); }
+.ltable-wrap { overflow: auto; border: 1px solid var(--stroke); border-radius: 8px; max-width: 100%; background: var(--surface); }
+.ltable-wrap.scroll { max-height: 22em; }
+.ltable { border-collapse: separate; border-spacing: 0; font-variant-numeric: tabular-nums; font-size: .82em; width: max-content; min-width: 100%; }
+.ltable th, .ltable td { padding: .38em .9em; text-align: right; border-bottom: 1px solid var(--stroke); white-space: nowrap; }
+.ltable thead th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); font-weight: 600; }
+.ltable td { font-family: var(--mono); }
+.ltable tbody tr:last-child td, .ltable tbody tr:last-child th { border-bottom: 0; }
+.ltable tr.cur td, .ltable tr.cur th { background: var(--brand-subtle); font-weight: 700; }
+.ltable .sep { border-left: 1px solid var(--stroke-strong); }
+.ltable td.e { color: var(--text-3); }
+.ltable tr.cur td.e { color: var(--text); }
+.ldom th { text-align: left; font-weight: 600; }
+.ldom .vs { color: var(--text-3); text-align: center; font-family: var(--font); }
+.ldom .verdict { font-family: var(--font); text-align: left; }
+.ldom .verdict.ok { color: var(--ok-fg); }
+.ldom .verdict.bad { color: var(--err-fg); }
+.ldom .verdict .ic { width: 1em; height: 1em; vertical-align: -.15em; }
+
+.lec-note { display: flex; gap: .6em; align-items: flex-start; background: var(--surface); border: 1px solid var(--stroke); font-size: .78em; color: var(--text-2); padding: .75em .95em; border-radius: 8px; max-width: 80ch; }
+.lec-note .ic { color: var(--warn-fg); width: 1.2em; height: 1.2em; flex: none; margin-top: .1em; }
+.lec-note p { margin: 0; }
+.lec-nav { display: flex; align-items: center; gap: 12px; justify-content: space-between; padding: 10px 16px calc(env(safe-area-inset-bottom, 0px) + 10px); background: var(--surface); border-top: 1px solid var(--stroke); }
+.lec-nav .btn { height: 44px; min-width: 128px; font-size: 15px; gap: 8px; }
+.lec-nav .btn:disabled { opacity: .45; cursor: default; }
+.lec-nav .btn.primary.reveal { background: var(--text); color: var(--surface); }
+.lec-hint { font-size: 12px; line-height: 16px; color: var(--text-3); text-align: center; }
+@media (max-width: 900px) {
+  .lec-body { grid-template-columns: minmax(0, 1fr); }
+  .lec-outline { position: absolute; z-index: 3; inset: 0 auto 0 0; width: min(300px, 85vw); box-shadow: var(--shadow-4); }
+  .lec-stage { padding: 20px 16px 32px; }
+}
+@media (max-width: 640px) {
+  .lec-prog, .lec-hint { display: none; }
+  .lec-bar { gap: 8px; padding-inline: 8px; }
+  .lec-tools .btn-icon { width: 32px; }
+  #lec-t-smaller, #lec-t-larger { display: none; }
+  .lec-nav .btn { min-width: 0; flex: 1; }
+  .lec-inner { font-size: calc(16px * var(--ls)); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="i-calculator" viewBox="0 0 20 20"><path d="M8 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0m0 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2m1 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-4-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2m1 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7.5 4C6.67 4 6 4.67 6 5.5v1C6 7.33 6.67 8 7.5 8h5c.83 0 1.5-.67 1.5-1.5v-1c0-.83-.67-1.5-1.5-1.5zM7 5.5c0-.28.22-.5.5-.5h5c.28 0 .5.22.5.5v1a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5zm9 10a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-11A2.5 2.5 0 0 1 6.5 2h7A2.5 2.5 0 0 1 16 4.5zm-1-11c0-.83-.67-1.5-1.5-1.5h-7C5.67 3 5 3.67 5 4.5v11c0 .83.67 1.5 1.5 1.5h7c.83 0 1.5-.67 1.5-1.5z"/></symbol><symbol id="i-subtract" viewBox="0 0 20 20"><path d="M3 10c0-.28.22-.5.5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 3 10"/></symbol><symbol id="i-add" viewBox="0 0 20 20"><path d="M10 2.5c.28 0 .5.22.5.5v6.5H17a.5.5 0 0 1 0 1h-6.5V17a.5.5 0 0 1-1 0v-6.5H3a.5.5 0 0 1 0-1h6.5V3c0-.28.22-.5.5-.5"/></symbol><symbol id="i-doc" viewBox="0 0 20 20"><path d="M6.5 10a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zM4 4c0-1.1.9-2 2-2h4.59q.62.01 1.06.44l3.91 3.91c.28.28.44.67.44 1.06V16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8h-3.5A1.5 1.5 0 0 1 10 6.5V3zm5.5 4h3.3L11 3.2v3.3c0 .28.22.5.5.5"/></symbol><symbol id="i-eraser" viewBox="0 0 20 20"><path d="M11.2 2.44a1.5 1.5 0 0 1 2.12 0l4.24 4.24a1.5 1.5 0 0 1 0 2.12L9.36 17h5.14a.5.5 0 1 1 0 1H7.82a1.5 1.5 0 0 1-1.14-.44l-4.24-4.24a1.5 1.5 0 0 1 0-2.12zm1.41.7a.5.5 0 0 0-.7 0L5.53 9.52l4.95 4.95 6.36-6.36a.5.5 0 0 0 0-.71zM9.78 15.18l-4.95-4.95-1.69 1.69a.5.5 0 0 0 0 .7l4.25 4.25c.2.2.5.2.7 0z"/></symbol><symbol id="i-paste" viewBox="0 0 20 20"><path d="M4.5 4h1.59c.2.58.76 1 1.41 1h3c.65 0 1.2-.42 1.41-1h1.59c.28 0 .5.22.5.5v1a.5.5 0 0 0 1 0v-1c0-.83-.67-1.5-1.5-1.5h-1.59c-.2-.58-.76-1-1.41-1h-3c-.65 0-1.2.42-1.41 1H4.5C3.67 3 3 3.67 3 4.5v12c0 .83.67 1.5 1.5 1.5h3a.5.5 0 0 0 0-1h-3a.5.5 0 0 1-.5-.5v-12c0-.28.22-.5.5-.5m3 0a.5.5 0 0 1 0-1h3a.5.5 0 0 1 0 1zm3 3C9.67 7 9 7.67 9 8.5v8c0 .83.67 1.5 1.5 1.5h5c.83 0 1.5-.67 1.5-1.5v-8c0-.83-.67-1.5-1.5-1.5zM10 8.5c0-.28.22-.5.5-.5h5c.28 0 .5.22.5.5v8a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5z"/></symbol><symbol id="i-chevron" viewBox="0 0 20 20"><path d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0"/></symbol><symbol id="i-play" viewBox="0 0 20 20"><path d="M17.22 8.68a1.5 1.5 0 0 1 0 2.63l-10 5.5A1.5 1.5 0 0 1 5 15.5v-11A1.5 1.5 0 0 1 7.22 3.2z"/></symbol><symbol id="i-table" viewBox="0 0 20 20"><path d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5v9A2.5 2.5 0 0 0 5.5 17h9a2.5 2.5 0 0 0 2.5-2.5zm-13 9V13h3v3H5.36A1.5 1.5 0 0 1 4 14.5m8-1.5v3H8v-3zm2.5 3H13v-3h3v1.64A1.5 1.5 0 0 1 14.5 16M12 8v4H8V8zm1 0h3v4h-3zm-1-4v3H8V4zm1 0h1.64A1.5 1.5 0 0 1 16 5.5V7h-3zM7 4v3H4V5.36A1.5 1.5 0 0 1 5.5 4zm0 4v4H4V8z"/></symbol><symbol id="i-code" viewBox="0 0 20 20"><path d="M12.64 1.02a.5.5 0 0 1 .34.62l-5 17a.5.5 0 0 1-.96-.28l5-17a.5.5 0 0 1 .62-.34M5.13 5.17a.5.5 0 0 1 .74.66L2.17 10l3.7 4.17a.5.5 0 0 1-.74.66l-4-4.5a.5.5 0 0 1 0-.66zm9.04-.04a.5.5 0 0 1 .7.04l4 4.5a.5.5 0 0 1 0 .66l-4 4.5a.5.5 0 0 1-.74-.66l3.7-4.17-3.7-4.17a.5.5 0 0 1 .04-.7"/></symbol><symbol id="i-copy" viewBox="0 0 20 20"><path d="M7 7H5.5C4.67 7 4 7.67 4 8.5v6c0 .83.67 1.5 1.5 1.5h4c.65 0 1.2-.42 1.41-1h1.04a2.5 2.5 0 0 1-2.45 2h-4A2.5 2.5 0 0 1 3 14.5v-6A2.5 2.5 0 0 1 5.5 6H7zm7.5-4A2.5 2.5 0 0 1 17 5.5v6a2.5 2.5 0 0 1-2.5 2.5h-4A2.5 2.5 0 0 1 8 11.5v-6A2.5 2.5 0 0 1 10.5 3zm-4 1C9.67 4 9 4.67 9 5.5v6c0 .83.67 1.5 1.5 1.5h4c.83 0 1.5-.67 1.5-1.5v-6c0-.83-.67-1.5-1.5-1.5z"/></symbol><symbol id="i-ok" viewBox="0 0 20 20"><path d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m3.36 5.65a.5.5 0 0 0-.64-.06l-.07.06L9 11.3 7.35 9.65l-.07-.06a.5.5 0 0 0-.7.7l.07.07 2 2 .07.06c.17.11.4.11.56 0l.07-.06 4-4 .07-.08a.5.5 0 0 0-.06-.63"/></symbol><symbol id="i-err" viewBox="0 0 20 20"><path d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m0 10.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5M10 6a.5.5 0 0 0-.5.41v4.68a.5.5 0 0 0 1 0V6.41A.5.5 0 0 0 10 6"/></symbol><symbol id="i-warn" viewBox="0 0 20 20"><path d="M7.37 3.56a3 3 0 0 1 5.26 0l5.5 10A3 3 0 0 1 15.5 18h-11a3 3 0 0 1-2.63-4.44zM10 12.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5m0-6.25a.5.5 0 0 0-.5.5v4a.5.5 0 0 0 1 0V7a.5.5 0 0 0-.5-.5"/></symbol><symbol id="i-info" viewBox="0 0 20 20"><path d="M18 10a8 8 0 1 0-16 0 8 8 0 0 0 16 0M9.5 8.91a.5.5 0 0 1 1 0v4.69a.5.5 0 0 1-1 0V8.9m-.25-2.16a.75.75 0 1 1 1.5 0 .75.75 0 0 1-1.5 0"/></symbol><symbol id="i-check" viewBox="0 0 20 20"><path d="M7.03 13.9 3.56 10a.75.75 0 0 0-1.12 1l4 4.5c.29.32.79.34 1.09.03l10.5-10.5a.75.75 0 0 0-1.06-1.06z"/></symbol></defs></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="i-calculator" viewBox="0 0 20 20"><path d="M8 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0m0 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2m1 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-4-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2m1 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7.5 4C6.67 4 6 4.67 6 5.5v1C6 7.33 6.67 8 7.5 8h5c.83 0 1.5-.67 1.5-1.5v-1c0-.83-.67-1.5-1.5-1.5zM7 5.5c0-.28.22-.5.5-.5h5c.28 0 .5.22.5.5v1a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5zm9 10a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-11A2.5 2.5 0 0 1 6.5 2h7A2.5 2.5 0 0 1 16 4.5zm-1-11c0-.83-.67-1.5-1.5-1.5h-7C5.67 3 5 3.67 5 4.5v11c0 .83.67 1.5 1.5 1.5h7c.83 0 1.5-.67 1.5-1.5z"/></symbol><symbol id="i-subtract" viewBox="0 0 20 20"><path d="M3 10c0-.28.22-.5.5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 3 10"/></symbol><symbol id="i-add" viewBox="0 0 20 20"><path d="M10 2.5c.28 0 .5.22.5.5v6.5H17a.5.5 0 0 1 0 1h-6.5V17a.5.5 0 0 1-1 0v-6.5H3a.5.5 0 0 1 0-1h6.5V3c0-.28.22-.5.5-.5"/></symbol><symbol id="i-doc" viewBox="0 0 20 20"><path d="M6.5 10a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zM4 4c0-1.1.9-2 2-2h4.59q.62.01 1.06.44l3.91 3.91c.28.28.44.67.44 1.06V16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8h-3.5A1.5 1.5 0 0 1 10 6.5V3zm5.5 4h3.3L11 3.2v3.3c0 .28.22.5.5.5"/></symbol><symbol id="i-eraser" viewBox="0 0 20 20"><path d="M11.2 2.44a1.5 1.5 0 0 1 2.12 0l4.24 4.24a1.5 1.5 0 0 1 0 2.12L9.36 17h5.14a.5.5 0 1 1 0 1H7.82a1.5 1.5 0 0 1-1.14-.44l-4.24-4.24a1.5 1.5 0 0 1 0-2.12zm1.41.7a.5.5 0 0 0-.7 0L5.53 9.52l4.95 4.95 6.36-6.36a.5.5 0 0 0 0-.71zM9.78 15.18l-4.95-4.95-1.69 1.69a.5.5 0 0 0 0 .7l4.25 4.25c.2.2.5.2.7 0z"/></symbol><symbol id="i-paste" viewBox="0 0 20 20"><path d="M4.5 4h1.59c.2.58.76 1 1.41 1h3c.65 0 1.2-.42 1.41-1h1.59c.28 0 .5.22.5.5v1a.5.5 0 0 0 1 0v-1c0-.83-.67-1.5-1.5-1.5h-1.59c-.2-.58-.76-1-1.41-1h-3c-.65 0-1.2.42-1.41 1H4.5C3.67 3 3 3.67 3 4.5v12c0 .83.67 1.5 1.5 1.5h3a.5.5 0 0 0 0-1h-3a.5.5 0 0 1-.5-.5v-12c0-.28.22-.5.5-.5m3 0a.5.5 0 0 1 0-1h3a.5.5 0 0 1 0 1zm3 3C9.67 7 9 7.67 9 8.5v8c0 .83.67 1.5 1.5 1.5h5c.83 0 1.5-.67 1.5-1.5v-8c0-.83-.67-1.5-1.5-1.5zM10 8.5c0-.28.22-.5.5-.5h5c.28 0 .5.22.5.5v8a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5z"/></symbol><symbol id="i-chevron" viewBox="0 0 20 20"><path d="M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0"/></symbol><symbol id="i-play" viewBox="0 0 20 20"><path d="M17.22 8.68a1.5 1.5 0 0 1 0 2.63l-10 5.5A1.5 1.5 0 0 1 5 15.5v-11A1.5 1.5 0 0 1 7.22 3.2z"/></symbol><symbol id="i-table" viewBox="0 0 20 20"><path d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5v9A2.5 2.5 0 0 0 5.5 17h9a2.5 2.5 0 0 0 2.5-2.5zm-13 9V13h3v3H5.36A1.5 1.5 0 0 1 4 14.5m8-1.5v3H8v-3zm2.5 3H13v-3h3v1.64A1.5 1.5 0 0 1 14.5 16M12 8v4H8V8zm1 0h3v4h-3zm-1-4v3H8V4zm1 0h1.64A1.5 1.5 0 0 1 16 5.5V7h-3zM7 4v3H4V5.36A1.5 1.5 0 0 1 5.5 4zm0 4v4H4V8z"/></symbol><symbol id="i-code" viewBox="0 0 20 20"><path d="M12.64 1.02a.5.5 0 0 1 .34.62l-5 17a.5.5 0 0 1-.96-.28l5-17a.5.5 0 0 1 .62-.34M5.13 5.17a.5.5 0 0 1 .74.66L2.17 10l3.7 4.17a.5.5 0 0 1-.74.66l-4-4.5a.5.5 0 0 1 0-.66zm9.04-.04a.5.5 0 0 1 .7.04l4 4.5a.5.5 0 0 1 0 .66l-4 4.5a.5.5 0 0 1-.74-.66l3.7-4.17-3.7-4.17a.5.5 0 0 1 .04-.7"/></symbol><symbol id="i-copy" viewBox="0 0 20 20"><path d="M7 7H5.5C4.67 7 4 7.67 4 8.5v6c0 .83.67 1.5 1.5 1.5h4c.65 0 1.2-.42 1.41-1h1.04a2.5 2.5 0 0 1-2.45 2h-4A2.5 2.5 0 0 1 3 14.5v-6A2.5 2.5 0 0 1 5.5 6H7zm7.5-4A2.5 2.5 0 0 1 17 5.5v6a2.5 2.5 0 0 1-2.5 2.5h-4A2.5 2.5 0 0 1 8 11.5v-6A2.5 2.5 0 0 1 10.5 3zm-4 1C9.67 4 9 4.67 9 5.5v6c0 .83.67 1.5 1.5 1.5h4c.83 0 1.5-.67 1.5-1.5v-6c0-.83-.67-1.5-1.5-1.5z"/></symbol><symbol id="i-ok" viewBox="0 0 20 20"><path d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m3.36 5.65a.5.5 0 0 0-.64-.06l-.07.06L9 11.3 7.35 9.65l-.07-.06a.5.5 0 0 0-.7.7l.07.07 2 2 .07.06c.17.11.4.11.56 0l.07-.06 4-4 .07-.08a.5.5 0 0 0-.06-.63"/></symbol><symbol id="i-err" viewBox="0 0 20 20"><path d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m0 10.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5M10 6a.5.5 0 0 0-.5.41v4.68a.5.5 0 0 0 1 0V6.41A.5.5 0 0 0 10 6"/></symbol><symbol id="i-warn" viewBox="0 0 20 20"><path d="M7.37 3.56a3 3 0 0 1 5.26 0l5.5 10A3 3 0 0 1 15.5 18h-11a3 3 0 0 1-2.63-4.44zM10 12.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5m0-6.25a.5.5 0 0 0-.5.5v4a.5.5 0 0 0 1 0V7a.5.5 0 0 0-.5-.5"/></symbol><symbol id="i-info" viewBox="0 0 20 20"><path d="M18 10a8 8 0 1 0-16 0 8 8 0 0 0 16 0M9.5 8.91a.5.5 0 0 1 1 0v4.69a.5.5 0 0 1-1 0V8.9m-.25-2.16a.75.75 0 1 1 1.5 0 .75.75 0 0 1-1.5 0"/></symbol><symbol id="i-check" viewBox="0 0 20 20"><path d="M7.03 13.9 3.56 10a.75.75 0 0 0-1.12 1l4 4.5c.29.32.79.34 1.09.03l10.5-10.5a.75.75 0 0 0-1.06-1.06z"/></symbol><symbol id="i-presenter" viewBox="0 0 20 20"><path d="M10 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4m0-1a1 1 0 1 1 0-2 1 1 0 0 1 0 2M8.5 8a.5.5 0 0 0-.5.5V9H7v-.5C7 7.67 7.67 7 8.5 7h3c.83 0 1.5.67 1.5 1.5V9h-1v-.5a.5.5 0 0 0-.5-.5zM7 14.78v1.72c0 .83.67 1.5 1.5 1.5h3c.83 0 1.5-.67 1.5-1.5v-1.72a.5.5 0 0 1 .15-.36l3.7-3.56a.5.5 0 0 0-.34-.86H3.49a.5.5 0 0 0-.35.86l3.7 3.56q.15.16.16.36m1 1.72v-1.72c0-.4-.17-.8-.46-1.08L4.73 11h10.54l-2.81 2.7c-.3.29-.46.68-.46 1.08v1.72a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5"/></symbol><symbol id="i-list" viewBox="0 0 20 20"><path d="M2 4.5c0-.28.22-.5.5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0 10c0-.28.22-.5.5-.5h10a.5.5 0 0 1 0 1h-10a.5.5 0 0 1-.5-.5M2.5 9a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1z"/></symbol><symbol id="i-eye" viewBox="0 0 20 20"><path d="M3.26 11.6A7 7 0 0 1 10 6c3.2 0 6.06 2.33 6.74 5.6a.5.5 0 0 0 .98-.2A8 8 0 0 0 10 5a8 8 0 0 0-7.72 6.4.5.5 0 0 0 .98.2M10 8a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7m-2.5 3.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0"/></symbol><symbol id="i-eye-off" viewBox="0 0 20 20"><path d="M2.85 2.15a.5.5 0 1 0-.7.7l3.5 3.5a8 8 0 0 0-3.37 5.05.5.5 0 1 0 .98.2 7 7 0 0 1 3.1-4.53l1.6 1.59a3.5 3.5 0 1 0 4.88 4.89l4.3 4.3a.5.5 0 0 0 .71-.7zm9.27 10.68a2.5 2.5 0 1 1-3.45-3.45zm-2-4.83 3.38 3.38A3.5 3.5 0 0 0 10.12 8M10 6q-.86 0-1.67.21l-.8-.8A8 8 0 0 1 10 5c3.7 0 6.94 2.67 7.72 6.4a.5.5 0 0 1-.98.2A7 7 0 0 0 10 6"/></symbol><symbol id="i-idea" viewBox="0 0 20 20"><path d="M10 2c3.31 0 6 2.6 6 5.8q-.01 2.53-2.2 4.6a1 1 0 0 0-.15.2l-.02.09-.94 3.92a1.8 1.8 0 0 1-1.67 1.38l-.15.01H9.13c-.82 0-1.54-.52-1.78-1.26l-.04-.14-.93-3.91a.6.6 0 0 0-.17-.3A6.3 6.3 0 0 1 4 8.04L4 7.8v-.2A5.9 5.9 0 0 1 10 2m2.05 13h-4.1l.32 1.33.03.1c.1.3.38.52.71.56l.12.01h1.81a.9.9 0 0 0 .75-.53l.03-.1zM10 3a4.9 4.9 0 0 0-4.98 4.41L5 7.63V8q.08 1.95 1.9 3.67.27.27.4.64l.05.15.37 1.54h4.57l.38-1.61.05-.16q.13-.32.39-.56Q15 9.87 15 7.8A4.9 4.9 0 0 0 10 3"/></symbol><symbol id="i-zoom-in" viewBox="0 0 20 20"><path d="M8.5 5.5c.28 0 .5.22.5.5v2h2a.5.5 0 0 1 0 1H9v2a.5.5 0 0 1-1 0V9H6a.5.5 0 0 1 0-1h2V6c0-.28.22-.5.5-.5m0-3.5a6.5 6.5 0 0 1 4.94 10.73l3.41 3.42a.5.5 0 0 1-.63.76l-.07-.06-3.42-3.41A6.5 6.5 0 1 1 8.5 2m0 1a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11"/></symbol><symbol id="i-zoom-out" viewBox="0 0 20 20"><path d="M11 8a.5.5 0 0 1 0 1H6a.5.5 0 0 1 0-1zM8.5 2a6.5 6.5 0 0 1 4.94 10.73l3.41 3.42a.5.5 0 0 1-.63.76l-.07-.06-3.42-3.41A6.5 6.5 0 1 1 8.5 2m0 1a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11"/></symbol><symbol id="i-fs-max" viewBox="0 0 20 20"><path d="M3 5c0-1.1.9-2 2-2h2a.5.5 0 0 1 0 1H5a1 1 0 0 0-1 1v2a.5.5 0 0 1-1 0zm9.5-1.5c0-.28.22-.5.5-.5h2a2 2 0 0 1 2 2v2a.5.5 0 0 1-1 0V5a1 1 0 0 0-1-1h-2a.5.5 0 0 1-.5-.5m-9 9c.28 0 .5.22.5.5v2a1 1 0 0 0 1 1h2a.5.5 0 0 1 0 1H5a2 2 0 0 1-2-2v-2c0-.28.22-.5.5-.5m13 0c.28 0 .5.22.5.5v2a2 2 0 0 1-2 2h-2a.5.5 0 0 1 0-1h2a1 1 0 0 0 1-1v-2c0-.28.22-.5.5-.5"/></symbol><symbol id="i-fs-min" viewBox="0 0 20 20"><path d="M14 5a1 1 0 0 0 1 1h2a.5.5 0 0 1 0 1h-2a2 2 0 0 1-2-2V3a.5.5 0 0 1 1 0zM6 15a1 1 0 0 0-1-1H3a.5.5 0 0 1 0-1h2a2 2 0 0 1 2 2v2a.5.5 0 0 1-1 0zm8 0a1 1 0 0 1 1-1h2a.5.5 0 0 0 0-1h-2a2 2 0 0 0-2 2v2a.5.5 0 0 0 1 0zM5 6a1 1 0 0 0 1-1V3a.5.5 0 0 1 1 0v2a2 2 0 0 1-2 2H3a.5.5 0 0 1 0-1z"/></symbol><symbol id="i-dismiss" viewBox="0 0 20 20"><path d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07z"/></symbol><symbol id="i-chev-l" viewBox="0 0 20 20"><path d="M12.35 15.85a.5.5 0 0 1-.7 0L6.16 10.4a.55.55 0 0 1 0-.78l5.49-5.46a.5.5 0 1 1 .7.7L7.2 10l5.16 5.15c.2.2.2.5 0 .7"/></symbol><symbol id="i-chev-r" viewBox="0 0 20 20"><path d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.47a.5.5 0 0 1-.7-.71L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7"/></symbol></defs></svg>
 <header class="appbar">
   <div class="appbar-inner">
     <div class="brand">
@@ -442,7 +573,7 @@ code { font-family: var(--mono); font-size: .92em; }
 
     <div class="col-output">
       <section class="card result" id="result" aria-labelledby="res-title" aria-busy="false">
-        <div class="card-head"><h2 id="res-title">Result</h2><span class="badge" id="status">Waiting</span></div>
+        <div class="card-head"><h2 id="res-title">Result</h2><div class="actions"><span class="badge" id="status">Waiting</span><button type="button" class="btn" id="btn-lecture" disabled title="Present the solution one step at a time"><svg class="ic" aria-hidden="true"><use href="#i-presenter"/></svg>Lecture mode</button></div></div>
         <dl class="meta" id="meta"></dl>
         <div id="summary" aria-live="polite" style="display:grid;gap:10px"></div>
       </section>
@@ -846,6 +977,8 @@ code { font-family: var(--mono); font-size: .92em; }
     $('summary').innerHTML = msgBar(kind, esc(msg));
     $('panel-steps').innerHTML = '';
     $('console').textContent = '';
+    window.__lssLast = null;
+    window.dispatchEvent(new CustomEvent('lss:result', { detail: null }));
   }
   function paint() {
     const { data, req } = state.last;
@@ -867,6 +1000,8 @@ code { font-family: var(--mono); font-size: .92em; }
     $('summary').innerHTML = summary;
     $('panel-steps').innerHTML = renderSteps(data.text);
     $('console').textContent = data.text.replace(/^\n+/, '');
+    window.__lssLast = state.last;
+    window.dispatchEvent(new CustomEvent('lss:result', { detail: state.last }));
   }
   function markStale() {
     if (state.last && !state.busy && !$('summary').querySelector('.stale')) {
@@ -993,6 +1128,820 @@ code { font-family: var(--mono); font-size: .92em; }
   fetch('api/health').then((r) => r.json()).then((d) => setEngine(true, d.engine)).catch(() => setEngine(false));
   solve();
 })();
+</script>
+<div class="lec" id="lec" role="dialog" aria-modal="true" aria-labelledby="lec-title" tabindex="-1" hidden>
+  <header class="lec-bar">
+    <div class="lec-id"><span class="lec-code" id="lec-code"></span><span class="lec-method" id="lec-method"></span></div>
+    <div class="lec-prog"><span id="lec-count">Step 1 of 1</span><div class="lec-track"><div class="lec-fill" id="lec-fill"></div></div></div>
+    <div class="lec-tools" role="toolbar" aria-label="Lecture tools">
+      <button type="button" class="btn-icon" id="lec-t-outline" aria-pressed="true" title="Step list (O)" aria-label="Step list"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg></button>
+      <button type="button" class="btn-icon" id="lec-t-pause" aria-pressed="true" title="Pause before each answer (R)" aria-label="Pause before each answer"><svg class="ic" aria-hidden="true"><use href="#i-eye-off"/></svg></button>
+      <button type="button" class="btn-icon" id="lec-t-notes" aria-pressed="true" title="Teaching notes (N)" aria-label="Teaching notes"><svg class="ic" aria-hidden="true"><use href="#i-idea"/></svg></button>
+      <button type="button" class="btn-icon" id="lec-t-smaller" title="Smaller text (−)" aria-label="Smaller text"><svg class="ic" aria-hidden="true"><use href="#i-zoom-out"/></svg></button>
+      <button type="button" class="btn-icon" id="lec-t-larger" title="Larger text (+)" aria-label="Larger text"><svg class="ic" aria-hidden="true"><use href="#i-zoom-in"/></svg></button>
+      <button type="button" class="btn-icon" id="lec-t-full" title="Full screen (F)" aria-label="Full screen"><svg class="ic" aria-hidden="true"><use href="#i-fs-max"/></svg></button>
+      <button type="button" class="btn-icon" id="lec-close" title="Close (Esc)" aria-label="Close lecture mode"><svg class="ic" aria-hidden="true"><use href="#i-dismiss"/></svg></button>
+    </div>
+  </header>
+  <div class="lec-body">
+    <nav class="lec-outline" aria-label="Steps"><div id="lec-outline-list"></div></nav>
+    <main class="lec-stage" id="lec-stage">
+      <div class="lec-inner">
+        <div class="lec-group" id="lec-group"></div>
+        <h2 class="lec-title" id="lec-title"></h2>
+        <p class="lec-kicker" id="lec-kicker" hidden></p>
+        <div class="lec-visual" id="lec-visual" aria-live="polite"></div>
+        <aside class="lec-note" id="lec-note" hidden></aside>
+      </div>
+    </main>
+  </div>
+  <footer class="lec-nav">
+    <button type="button" class="btn" id="lec-prev"><svg class="ic" aria-hidden="true"><use href="#i-chev-l"/></svg><span>Back</span></button>
+    <span class="lec-hint" id="lec-hint"></span>
+    <button type="button" class="btn primary" id="lec-next"><span>Next</span></button>
+  </footer>
+</div>
+<script>
+/* Lecture mode: turns the MATLAB printout into a sequence of teaching slides.
+   No numerical computation happens here. Every number shown is copied from the
+   printout produced by the MATLAB solver code; this file only decides what to
+   show on each slide and which cells to highlight. */
+(function (root) {
+  'use strict';
+
+  // ---------------------------------------------------------------- helpers
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const clone = (o) => JSON.parse(JSON.stringify(o));
+  const isBar = (l, ch) => { const t = l.trim(); return t.length >= 60 && t === ch.repeat(t.length); };
+  const MAT_ROW = /^\s{5}\[(.*)\](.*)$/;
+
+  function idx(tok) {            // "21" -> [2,1];  "(10,3)" -> [10,3]  (1-based)
+    const m = /^\((\d+),(\d+)\)$/.exec(tok);
+    if (m) return [+m[1], +m[2]];
+    return [+tok[0], +tok[1]];
+  }
+  function constStr(v, dp) { return dp > 0 ? `${v}.${'0'.repeat(dp)}` : String(v); }
+
+  // Pretty maths: subscripts for a/l/u/y/b names, italics for the unknowns, real minus signs.
+  function mathHTML(s, names) {
+    const nameAlt = names.slice().sort((a, b) => b.length - a.length).map(reEsc).join('|');
+    const re = new RegExp(
+      '(det\\[A(?:_([A-Za-z][A-Za-z0-9_]*))?\\])' +                          // 1,2 det[A] / det[A_x1]
+      '|(?<![A-Za-z0-9_])([alu])(?:(\\d)(\\d)|\\((\\d+),(\\d+)\\))(?![0-9])' + // 3..7 a12 / l(10,3)
+      '|(?<![A-Za-z0-9_])([yb])(\\d+)(?![0-9])' +                             // 8,9 y1 b2
+      `|(?<![A-Za-z0-9_])(${nameAlt || '[^\\s\\S]'})(?![A-Za-z0-9_])` +    // 10 unknown names (never matches if none)
+      '|(sqrt)|(\\^2)|(\\^T)|(\\*)|( - )|(<->)|(<-)|(->)', 'g');
+    const v = (name) => { const m = /^([A-Za-z]+)_?(\d+)$/.exec(name); return m ? `<var>${esc(m[1])}<sub>${m[2]}</sub></var>` : `<var>${esc(name)}</var>`; };
+    let out = '', last = 0, m;
+    while ((m = re.exec(s))) {
+      out += esc(s.slice(last, m.index)).replace(/(^|[\s(=])-(?=\d)/g, '$1&minus;');
+      if (m[1]) out += m[2] ? `det[A<sub>${esc(m[2])}</sub>]` : 'det[A]';
+      else if (m[3]) out += `<var>${m[3]}</var><sub>${m[4] ? m[4] + m[5] : m[6] + ',' + m[7]}</sub>`;
+      else if (m[8]) out += `<var>${m[8]}</var><sub>${m[9]}</sub>`;
+      else if (m[10]) out += v(m[10]);
+      else if (m[11]) out += '&radic;';
+      else if (m[12]) out += '&sup2;';
+      else if (m[13]) out += '<sup>T</sup>';
+      else if (m[14]) out += '&middot;';
+      else if (m[15]) out += ' &minus; ';
+      else if (m[16]) out += '&harr;';
+      else if (m[17]) out += '&larr;';
+      else if (m[18]) out += '&rarr;';
+      last = re.lastIndex;
+    }
+    out += esc(s.slice(last)).replace(/(^|[\s(=])-(?=\d)/g, '$1&minus;');
+    return out;
+  }
+  const num = (s) => esc(s).replace(/^-/, '&minus;');
+
+  // ---------------------------------------------------------------- tokenizer
+  function tokenize(text) {
+    const L = text.replace(/\r/g, '').split('\n');
+    const T = [];
+    let i = 0;
+    while (i < L.length) {
+      const l = L[i], t = l.trim();
+      if (!t) { i++; continue; }
+      if (isBar(l, '=') && i + 2 < L.length && isBar(L[i + 2], '=')) {
+        const m = /^(\S+)\s{2}(.*?)(?:\s{2}\((.*)\))?$/.exec(L[i + 1].trim()) || [null, '', L[i + 1].trim(), ''];
+        T.push({ t: 'h', code: m[1].replace(/\.$/, ''), title: m[2], sub: m[3] || '' });
+        i += 3;
+        const para = [];
+        while (i < L.length && L[i].trim()) { para.push(L[i].trim()); i++; }
+        if (para.length) T.push({ t: 'para', text: para.join(' ') });
+        continue;
+      }
+      if (isBar(l, '-')) { T.push({ t: 'sub', text: (L[i + 1] || '').trim() }); i += 2; continue; }
+      if (/^ {4}\S/.test(l)) { T.push({ t: 'formula', text: t }); i++; continue; }
+      if (/^ {2}System of \d+ linear equations:/.test(l)) {
+        i++;
+        const eqs = [];
+        while (i < L.length && /^\s+\(\d+\)\s{2}/.test(L[i])) { eqs.push(L[i].trim().replace(/^\(\d+\)\s+/, '')); i++; }
+        T.push({ t: 'system', eqs });
+        continue;
+      }
+      const lab = /^ {2}(\S.*) =$/.exec(l);
+      if (lab && i + 1 < L.length && MAT_ROW.test(L[i + 1])) {
+        i++;
+        const rows = [];
+        while (i < L.length && MAT_ROW.test(L[i])) {
+          const m = MAT_ROW.exec(L[i]);
+          const parts = m[1].split('|');
+          rows.push({ left: parts[0].trim().split(/\s+/), right: parts.length > 1 ? parts[1].trim().split(/\s+/) : [], name: m[2].trim() });
+          i++;
+        }
+        T.push({ t: 'mat', label: lab[1], rows });
+        continue;
+      }
+      if (/^\s+k\s/.test(l) && /^\s+-{10,}\s*$/.test(L[i + 1] || '')) {
+        const head = t.split(/\s+/).filter((c) => c !== '|');
+        i += 2;
+        const rows = [];
+        while (i < L.length && L[i].trim()) { rows.push(L[i].trim().split(/\s+/).filter((c) => c !== '|')); i++; }
+        T.push({ t: 'table', head, rows });
+        continue;
+      }
+      const kw = /^(\*\*\* CANNOT SOLVE \*\*\*|WARNING:|CONVERGED|DIVERGED:|STOPPED|NOTE:|The system is strictly|\[A\] is symmetric)/.exec(t);
+      if (kw) {
+        const kind = { '*** CANNOT SOLVE ***': 'err', 'WARNING:': 'warn', CONVERGED: 'ok', 'DIVERGED:': 'err', STOPPED: 'warn', 'NOTE:': 'info' }[kw[1]] || 'ok';
+        const para = [];
+        if (kind !== 'err' || kw[1] !== '*** CANNOT SOLVE ***') para.push(t);
+        i++;
+        while (i < L.length && L[i].trim()) { para.push(L[i].trim()); i++; }
+        T.push({ t: 'callout', kind: kw[1] === '*** CANNOT SOLVE ***' ? 'error' : kind, text: para.join(kw[1] === '*** CANNOT SOLVE ***' ? '\n' : ' ') });
+        continue;
+      }
+      if (/^ {3}(Row|Column) \d+ of \[[LU]\]:$/.test(l)) { T.push({ t: 'group', text: t.replace(/:$/, '') }); i++; continue; }
+      const op = /^ {2}Step (\d+):\s+(.*?)\s{3}\((.*)\)$/.exec(l);
+      if (op) { T.push({ t: 'op', step: +op[1], op: op[2], why: op[3] }); i++; continue; }
+      if (/^ {2}\(\d+\) Unknown /.test(l)) { T.push({ t: 'label', text: t }); i++; continue; }
+      if (/^ {2}(Initial guess|Stopping criterion|Maximum iterations):/.test(l)) {
+        const lines = [];
+        while (i < L.length && /^ {2}(Initial guess|Stopping criterion|Maximum iterations):/.test(L[i])) { lines.push(L[i].trim()); i++; }
+        T.push({ t: 'settings', lines });
+        continue;
+      }
+      if (/^ {5}\S/.test(l)) { T.push({ t: 'entry', text: t }); i++; continue; }
+      T.push({ t: 'line', text: t });
+      i++;
+    }
+    return T;
+  }
+
+  // ---------------------------------------------------------------- teaching text
+  const IDEA = {
+    doolittle: 'Split [A] into a lower matrix [L] with 1s on its diagonal and an upper matrix [U]. Then solve two easy triangular systems: [L]{Y} = {B} from the top down, and [U]{X} = {Y} from the bottom up.',
+    crout: 'Split [A] into a lower matrix [L] and an upper matrix [U] with 1s on its diagonal. Then solve [L]{Y} = {B} from the top down, and [U]{X} = {Y} from the bottom up.',
+    cholesky: 'For a symmetric matrix, [A] = [L][L]ᵀ, so only [L] has to be computed. Diagonal entries use a square root. Then solve [L]{Y} = {B} and [L]ᵀ{X} = {Y}.',
+    cramer: 'Each unknown is a ratio of two determinants. The bottom is always det[A]. The top is the determinant of [A] with that unknown’s column replaced by {B}.',
+    gaussjordan: 'Use row operations to turn [A | B] into [I | X]. Go column by column: make the pivot 1, then make every other entry in that column 0. The last column is then the answer.',
+    seidel: 'Solve each equation for its diagonal unknown, start from a guess, and repeat. Gauss-Seidel uses each new value immediately, in the same iteration.',
+    jacobi: 'Solve each equation for its diagonal unknown, start from a guess, and repeat. Gauss-Jacobi computes every new value from the previous iteration only.',
+  };
+  const NOTE = {
+    luU_dool: 'Row of [U]: take the entry of [A] and subtract the row-times-column total of values already found (row of [L] times column of [U]).',
+    luL_dool: 'Column of [L]: same row-times-column total, then divide by the pivot on the diagonal of [U].',
+    luL_crout: 'Column of [L]: take the entry of [A] and subtract the row-times-column total of values already found.',
+    luU_crout: 'Row of [U]: same row-times-column total, then divide by the diagonal entry of [L].',
+    chol_diag: 'Diagonal of [L]: square root of the diagonal of [A] minus the squares already in this row of [L].',
+    chol_off: 'Below the diagonal: entry of [A] minus the row-times-row total, divided by the diagonal of [L] in this column.',
+    first: 'First row/column: nothing has been computed yet, so the value comes straight from [A].',
+    fwd: 'Work from the top down. Each y uses only the y values above it, which are already known.',
+    back: 'Work from the bottom up. Each unknown uses only the unknowns below it, which are already known.',
+    luFinal: 'Multiply [L][U] and you get [A] back. The check value shows how close it is.',
+    cramerDet: 'The main determinant. If it is 0, the system has no unique solution and Cramer’s rule cannot be used.',
+    cramerCol: 'Replace this unknown’s column with the constants {B}, then take the determinant.',
+    cramerQ: 'Divide: replaced-column determinant over the main determinant.',
+    gjCol: 'Goal for this column: pivot (circled) becomes 1, every other entry in the column becomes 0.',
+    gjNorm: 'Divide the whole pivot row by the pivot so the pivot becomes 1.',
+    gjElim: 'Add or subtract a multiple of the pivot row. The multiple is the entry you want to turn into 0.',
+    gjSwap: 'The pivot is 0, so swap with a lower row that has a non-zero entry in this column.',
+    gjSkip: 'The pivot is already 1, so no division is needed.',
+    gjFinal: 'The left side is now the identity matrix [I]. The last column holds the answer.',
+    dom: 'Strictly diagonally dominant: in every row, the diagonal entry (absolute value) is bigger than the sum of the others. Then the method is sure to converge.',
+    formulas: 'Each equation is solved for its own diagonal unknown.',
+    start: 'Iteration 0 is the initial guess. The stopping rule decides when to stop.',
+    iterSeidel: 'Blue values are new values from this iteration, used right away. Grey values come from the previous iteration.',
+    iterJacobi: 'Every value on the right side comes from the previous iteration (grey).',
+    errCol: 'Ea is the change from the previous iteration. Stop when every Ea meets the stopping rule.',
+  };
+
+  // ---------------------------------------------------------------- frame helpers
+  // visual items:
+  //  {k:'mat', label, cells:[[{v,s}]], aug, names}   s = space-separated states
+  //  {k:'op', text}  (between matrices: =, ×, →)
+  //  {k:'eqs', eqs}  {k:'msg', kind, text}  {k:'tiles', items:[{name,v}]}
+  //  {k:'table', head, rows, cur, hideCur}  {k:'list', items:[html]}  {k:'frac', top, bot, topLabel, botLabel}
+  function matFromRows(label, rows, opts = {}) {
+    const aug = rows[0].left.length;
+    const cells = rows.map((r) => [...r.left, ...r.right].map((v) => ({ v, s: opts.state || 'known' })));
+    const names = rows.some((r) => r.name) ? rows.map((r) => r.name) : null;
+    return { k: 'mat', label, cells, aug: rows[0].right.length ? aug : 0, names };
+  }
+  const blankGrid = (r, c) => Array.from({ length: r }, () => Array.from({ length: c }, () => ({ v: '', s: 'blank' })));
+  function withStates(grid, marks) {      // marks: [[i,j,state], ...] (0-based)
+    const g = clone(grid);
+    for (const [i, j, s] of marks) if (g[i] && g[i][j]) g[i][j].s += ' ' + s;
+    return g;
+  }
+
+  function refsOf(sym, names) {
+    const refs = [];
+    const re = /(?<![A-Za-z0-9_])([alu])(?:(\d)(\d)|\((\d+),(\d+)\))(?![0-9])|(?<![A-Za-z0-9_])([yb])(\d+)(?![0-9])/g;
+    let m;
+    while ((m = re.exec(sym))) {
+      if (m[1]) refs.push({ m: m[1], i: (m[2] ? +m[2] : +m[4]) - 1, j: (m[2] ? +m[3] : +m[5]) - 1 });
+      else refs.push({ m: m[6], i: +m[7] - 1, j: 0 });
+    }
+    names.forEach((nm, k) => { if (new RegExp(`(?<![A-Za-z0-9_])${reEsc(nm)}(?![A-Za-z0-9_])`).test(sym)) refs.push({ m: 'x', i: k, j: 0 }); });
+    return refs;
+  }
+  function splitEntry(text) {               // "u22 = a22 - l21*u12 = 4.0 - (..) = 3.75"
+    const parts = text.split(' = ');
+    return { lhs: parts[0], steps: parts.slice(1, -1), result: parts[parts.length - 1] };
+  }
+
+  // ---------------------------------------------------------------- builders
+  function build(text, req) {
+    const T = tokenize(text);
+    const names = req.names;
+    const n = names.length;
+    const dp = req.dp;
+    const method = req.method;
+    const head = T.find((t) => t.t === 'h') || { code: '', title: 'Solution', sub: '' };
+    const frames = [];
+    const ctx = { T, names, n, dp, method, frames, head };
+    const push = (f) => frames.push(Object.assign({ group: 'Setup', reveal: false, visual: [], calc: null, note: '' }, f));
+    ctx.push = push;
+
+    // ---- intro frames (shared)
+    const sys = T.find((t) => t.t === 'system');
+    const noteTok = T.find((t) => t.t === 'callout' && t.kind === 'info');
+    const aug = T.find((t) => t.t === 'mat' && /\[A \| B\]$/.test(t.label));
+    const vis = [];
+    if (sys) vis.push({ k: 'eqs', eqs: sys.eqs });
+    if (aug) vis.push(matFromRows('[A | B]', aug.rows));
+    if (noteTok) vis.push({ k: 'msg', kind: 'info', text: noteTok.text.replace(/^NOTE:\s*/, '') });
+    push({ group: 'Setup', short: 'The problem', title: `Solve ${n} equations in ${n} unknowns`, visual: vis, note: 'Read the system aloud and point at the coefficient matrix [A] and the constants {B}.' });
+    const formulas = T.filter((t) => t.t === 'formula').map((t) => t.text);
+    push({ group: 'Setup', short: 'The method', title: `${head.title.replace(/\b([A-Z])([A-Z'-]+)\b/g, (w, a, b) => a + b.toLowerCase()).replace(/\bgauss\b/gi, 'Gauss').replace(/\bjordan\b/gi, 'Jordan').replace(/\bseidel\b/gi, 'Seidel').replace(/\bjacobi\b/gi, 'Jacobi').replace(/\bcrout'?s\b/gi, (w) => 'C' + w.slice(1)).replace(/\bcramer'?s\b/gi, (w) => 'C' + w.slice(1)).replace(/\bdoolittle\b/gi, 'Doolittle').replace(/\bcholesky\b/gi, 'Cholesky')}`,
+      visual: [{ k: 'idea', text: IDEA[method] || '' }].concat(formulas.length ? [{ k: 'formulas', lines: formulas }] : []), note: head.sub ? `Category: ${head.sub}.` : '' });
+
+    if (['doolittle', 'crout', 'cholesky'].includes(method)) buildLU(ctx);
+    else if (method === 'cramer') buildCramer(ctx);
+    else if (method === 'gaussjordan') buildGJ(ctx);
+    else buildIter(ctx);
+
+    // ---- answer (shared)
+    const ansIdx = T.findIndex((t) => t.t === 'sub' && t.text === 'ANSWER');
+    if (ansIdx >= 0) {
+      const items = [];
+      const extra = [];
+      for (let k = ansIdx + 1; k < T.length && T[k].t !== 'sub'; k++) {
+        if (T[k].t === 'entry') { const e = splitEntry(T[k].text); items.push({ name: e.lhs, v: e.result }); }
+        else if (T[k].t === 'line') extra.push(T[k].text);
+      }
+      push({ group: 'Answer', short: 'Answer', title: 'The answer', visual: [{ k: 'tiles', items }, { k: 'small', lines: extra }], reveal: true, note: 'Substitute the answers back into one equation as a quick check with the class.' });
+    }
+    return { code: head.code, title: head.title, sub: head.sub, frames };
+  }
+
+  function errorFrame(ctx, tok, visual) {
+    const plain = clone(visual || []).map((v) => { if (v.cells) v.cells.forEach((r) => r.forEach((c) => { c.s = c.s.replace(/\b(cur|ref|from)\b/g, '').trim() || 'known'; })); return v; });
+    ctx.push({ group: 'Stopped', short: 'Cannot continue', title: 'The method cannot continue', visual: plain.concat([{ k: 'msg', kind: 'err', text: tok.text }]), note: 'A good moment to discuss why this method fails here, and which method would work instead.' });
+  }
+
+  // ---- LU: Doolittle, Crout, Cholesky
+  function buildLU(ctx) {
+    const { T, names, n, dp, method } = ctx;
+    const one = constStr(1, dp), zero = constStr(0, dp);
+    const aug = T.find((t) => t.t === 'mat' && /\[A \| B\]$/.test(t.label));
+    const A = aug ? aug.rows.map((r) => r.left) : null;
+    const B = aug ? aug.rows.map((r) => r.right[0]) : null;
+    const Lg = blankGrid(n, n), Ug = blankGrid(n, n);
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+      if (method === 'doolittle') {
+        if (i === j) Lg[i][j] = { v: one, s: 'fixed' };
+        if (j > i) Lg[i][j] = { v: zero, s: 'fixed' };
+        if (i > j) Ug[i][j] = { v: zero, s: 'fixed' };
+      } else if (method === 'crout') {
+        if (i === j) Ug[i][j] = { v: one, s: 'fixed' };
+        if (i > j) Ug[i][j] = { v: zero, s: 'fixed' };
+        if (j > i) Lg[i][j] = { v: zero, s: 'fixed' };
+      } else if (j > i) Lg[i][j] = { v: zero, s: 'fixed' };
+    }
+    const Ag = A ? A.map((r) => r.map((v) => ({ v, s: 'known' }))) : null;
+    let group = 'Step 1', stepTitle = 'Step 1', phase = 0, Lfinal = null, Ufinal = null, Ulabel = '[U]';
+    let lastVisual = Ag ? [{ k: 'mat', label: '[A]', cells: Ag }] : [];
+    const Yg = blankGrid(n, 1), Xg = blankGrid(n, 1);
+    const Bg = B ? B.map((v) => [{ v, s: 'known' }]) : null;
+    const yNames = names.map((_, i) => `y${i + 1}`);
+
+    for (let k = 0; k < T.length; k++) {
+      const t = T[k];
+      if (t.t === 'sub') {
+        const m = /^STEP (\d+): (.*?)(?:\s{2}\(.*\))?$/.exec(t.text);
+        if (m) { phase = +m[1]; stepTitle = `Step ${m[1]} · ${m[2]}`; }
+        else phase = 99;
+        continue;
+      }
+      if (t.t === 'callout' && t.kind === 'error') { errorFrame(ctx, t, lastVisual); continue; }
+      if (t.t === 'callout' && t.kind === 'ok' && phase === 0) {
+        ctx.push({ group: 'Setup', short: 'Symmetry check', title: 'Is [A] symmetric?', visual: [Ag ? { k: 'mat', label: '[A]', cells: Ag } : null, { k: 'msg', kind: 'ok', text: t.text }].filter(Boolean), note: 'Compare entries across the diagonal: a(i,j) must equal a(j,i).' });
+        continue;
+      }
+      if (phase === 1) {
+        if (t.t === 'group') { group = t.text; continue; }
+        if (t.t !== 'entry') continue;
+        const e = splitEntry(t.text);
+        const nm = /^([lu])(\d\d|\(\d+,\d+\))$/.exec(e.lhs);
+        if (!nm) continue;
+        const [ii, jj] = idx(nm[2]); const i = ii - 1, j = jj - 1;
+        const isL = nm[1] === 'l';
+        const sym = e.steps[0] || '';
+        const refs = refsOf(sym, []);
+        const aMarks = refs.filter((r) => r.m === 'a').map((r) => [r.i, r.j, 'ref']);
+        const lMarks = refs.filter((r) => r.m === 'l' && !(isL && r.i === i && r.j === j)).map((r) => [r.i, r.j, 'ref']);
+        const uMarks = refs.filter((r) => r.m === 'u' && !(!isL && r.i === i && r.j === j)).map((r) => [r.i, r.j, 'ref']);
+        const tgt = isL ? Lg : Ug;
+        tgt[i][j] = { v: e.result, s: 'known' };
+        const L1 = withStates(Lg, lMarks.concat(isL ? [[i, j, 'cur']] : []));
+        const U1 = withStates(Ug, uMarks.concat(!isL ? [[i, j, 'cur']] : []));
+        const visual = [];
+        if (Ag) visual.push({ k: 'mat', label: '[A]', cells: withStates(Ag, aMarks) });
+        visual.push({ k: 'mat', label: '[L]', cells: L1 });
+        if (method !== 'cholesky') visual.push({ k: 'mat', label: '[U]', cells: U1 });
+        lastVisual = visual;
+        let note;
+        const firstOne = !e.steps.length || !/[lu]\d|[lu]\(/.test(sym);
+        if (method === 'cholesky') note = i === j ? NOTE.chol_diag : NOTE.chol_off;
+        else if (method === 'doolittle') note = isL ? NOTE.luL_dool : NOTE.luU_dool;
+        else note = isL ? NOTE.luL_crout : NOTE.luU_crout;
+        if (firstOne && method !== 'cholesky' && !/\//.test(sym)) note = NOTE.first;
+        ctx.push({ group: stepTitle, short: e.lhs, title: `${group}: compute ${e.lhs}`, titleHTML: `${esc(group)}: compute ${mathHTML(e.lhs, names)}`, visual, calc: [{ lhs: e.lhs, steps: e.steps, result: e.result }], reveal: true, note });
+        continue;
+      }
+      if (phase === 2) {
+        if (t.t === 'mat' && t.label === '[L]') Lfinal = t;
+        if (t.t === 'mat' && /^\[U\]/.test(t.label)) { Ufinal = t; Ulabel = t.label; }
+        if (t.t === 'line' && /^Check:/.test(t.text) && Lfinal && Ufinal) {
+          const visual = [matFromRows('[L]', Lfinal.rows), { k: 'op', text: '×' }, matFromRows(Ulabel, Ufinal.rows)];
+          if (Ag) visual.push({ k: 'op', text: '=' }, { k: 'mat', label: '[A]', cells: Ag });
+          visual.push({ k: 'small', lines: [t.text] });
+          lastVisual = visual;
+          ctx.push({ group: stepTitle, short: '[L] and [U]', title: 'The finished [L] and [U]', titleHTML: 'The finished [L] and [U]', visual, note: NOTE.luFinal });
+        }
+        continue;
+      }
+      if ((phase === 3 || phase === 4) && t.t === 'entry') {
+        const e = splitEntry(t.text);
+        const fwd = phase === 3;
+        const i = fwd ? yNames.indexOf(e.lhs) : names.indexOf(e.lhs);
+        if (i < 0) continue;
+        const sym = e.steps[0] || '';
+        const refs = refsOf(sym, fwd ? [] : names);
+        const M = fwd ? Lfinal : Ufinal;
+        const Mcells = M ? withStates(matFromRows('', M.rows).cells, refs.filter((r) => r.m === (fwd ? 'l' : 'u')).map((r) => [r.i, r.j, 'ref'])) : null;
+        (fwd ? Yg : Xg)[i][0] = { v: e.result, s: 'known' };
+        const visual = [];
+        if (fwd) {
+          if (Mcells) visual.push({ k: 'mat', label: '[L]', cells: Mcells });
+          visual.push({ k: 'mat', label: '{Y}', cells: withStates(Yg, refs.filter((r) => r.m === 'y').map((r) => [r.i, 0, 'ref']).concat([[i, 0, 'cur']])), names: yNames });
+          visual.push({ k: 'op', text: '=' });
+          if (Bg) visual.push({ k: 'mat', label: '{B}', cells: withStates(Bg, refs.filter((r) => r.m === 'b').map((r) => [r.i, 0, 'ref'])) });
+        } else {
+          if (Mcells) visual.push({ k: 'mat', label: Ulabel.replace(' = [L]^T', ''), cells: Mcells });
+          visual.push({ k: 'mat', label: '{X}', cells: withStates(Xg, refs.filter((r) => r.m === 'x').map((r) => [r.i, 0, 'ref']).concat([[i, 0, 'cur']])), names });
+          visual.push({ k: 'op', text: '=' });
+          visual.push({ k: 'mat', label: '{Y}', cells: withStates(Yg.map((r) => [{ v: r[0].v, s: 'known' }]), refs.filter((r) => r.m === 'y').map((r) => [r.i, 0, 'ref'])), names: yNames });
+        }
+        lastVisual = visual;
+        ctx.push({ group: stepTitle, short: e.lhs, title: `${fwd ? 'Forward' : 'Back'} substitution: ${e.lhs}`, titleHTML: `${fwd ? 'Forward' : 'Back'} substitution: ${mathHTML(e.lhs, names)}`, visual, calc: [{ lhs: e.lhs, steps: e.steps, result: e.result }], reveal: true, note: fwd ? NOTE.fwd : NOTE.back });
+      }
+    }
+  }
+
+  // ---- Cramer's rule
+  function buildCramer(ctx) {
+    const { T, names } = ctx;
+    let phase = 0, Amat = null, Bmat = null, detA = null, cur = null, stepTitle = '';
+    const dets = {};
+    let lastVisual = [];
+    for (let k = 0; k < T.length; k++) {
+      const t = T[k];
+      if (t.t === 'sub') { const m = /^STEP (\d+): (.*)$/.exec(t.text); phase = m ? +m[1] : 99; if (m) stepTitle = `Step ${m[1]} · ${m[2]}`; continue; }
+      if (t.t === 'callout' && t.kind === 'error') { errorFrame(ctx, t, lastVisual); continue; }
+      if (phase === 1) {
+        if (t.t === 'mat' && t.label === '[A]') Amat = t;
+        if (t.t === 'mat' && t.label === '{B}') Bmat = t;
+        if (t.t === 'entry' && /^det\[A\] = /.test(t.text)) {
+          detA = t.text.split(' = ')[1];
+          const visual = [];
+          if (Amat) visual.push(matFromRows('[A]', Amat.rows));
+          if (Bmat) visual.push(matFromRows('{B}', Bmat.rows));
+          lastVisual = visual;
+          ctx.push({ group: stepTitle, short: 'det[A]', title: 'The main determinant', titleHTML: 'The main determinant, det[A]', visual, calc: [{ lhs: 'det[A]', steps: [], result: detA }], reveal: true, note: ctx.n === 3 ? NOTE.cramerDet + ' For 3 × 3, use the rule of Sarrus or cofactor expansion on the board.' : NOTE.cramerDet });
+        }
+      } else if (phase === 2) {
+        if (t.t === 'label') { const m = /^\((\d+)\) Unknown (\S+): replace column (\d+)/.exec(t.text); cur = m ? { i: +m[3] - 1, name: m[2] } : null; continue; }
+        if (t.t === 'mat' && cur) cur.mat = t;
+        if (t.t === 'entry' && cur && cur.mat) {
+          const v = t.text.split(' = ').pop();
+          dets[cur.name] = v;
+          const cells = matFromRows('', cur.mat.rows).cells.map((r) => r.map((c, j) => ({ v: c.v, s: j === cur.i ? 'known col' : 'known' })));
+          const visual = [];
+          if (Bmat) visual.push({ k: 'mat', label: '{B}', cells: matFromRows('', Bmat.rows).cells.map((r) => r.map((c) => ({ v: c.v, s: 'known col' }))) });
+          visual.push({ k: 'op', text: '→' }, { k: 'mat', label: `[A_${cur.name}]`, cells });
+          lastVisual = visual;
+          ctx.push({ group: stepTitle, short: `det[A_${cur.name}]`, title: `Unknown ${cur.name}: replace column ${cur.i + 1} with {B}`, titleHTML: `Unknown ${mathHTML(cur.name, names)}: replace column ${cur.i + 1} with {B}`, visual, calc: [{ lhs: `det[A_${cur.name}]`, steps: [], result: v }], reveal: true, note: NOTE.cramerCol });
+          cur = null;
+        }
+      } else if (phase === 3 && t.t === 'entry') {
+        const e = splitEntry(t.text);
+        const visual = [{ k: 'frac', topLabel: e.steps[0] ? e.steps[0].split(' / ')[0] : '', botLabel: 'det[A]', top: dets[e.lhs] || '', bot: detA || '' }];
+        ctx.push({ group: stepTitle, short: e.lhs, title: `Solve for ${e.lhs}`, titleHTML: `Solve for ${mathHTML(e.lhs, names)}`, visual, calc: [{ lhs: e.lhs, steps: e.steps, result: e.result }], reveal: true, note: NOTE.cramerQ });
+      }
+    }
+  }
+
+  // ---- Gauss-Jordan
+  function buildGJ(ctx) {
+    const { T, names } = ctx;
+    let cur = null, col = 0, stepTitle = 'Row operations', lastVisual = [];
+    const rowStr = (r) => `[ ${r.left.join('  ')}  |  ${r.right.join('  ')} ]`;
+    const rowHTML = (r) => `[ ${r.left.map(num).join('&nbsp;&nbsp;')} &nbsp;|&nbsp; ${r.right.map(num).join('&nbsp;&nbsp;')} ]`;
+    for (let k = 0; k < T.length; k++) {
+      const t = T[k];
+      if (t.t === 'callout' && t.kind === 'error') { errorFrame(ctx, t, lastVisual); continue; }
+      if (t.t === 'mat' && /^Initial augmented matrix/.test(t.label)) {
+        cur = t;
+        lastVisual = [matFromRows('[A | B]', t.rows)];
+        ctx.push({ group: 'Row operations', short: 'Start', title: 'Start with the augmented matrix', titleHTML: 'Start with the augmented matrix [A | B]', visual: lastVisual, note: 'Allowed moves: divide a row by a number, add a multiple of one row to another, swap two rows.' });
+        continue;
+      }
+      if (t.t === 'sub') {
+        const m = /^COLUMN (\d+)/.exec(t.text);
+        if (m && cur) {
+          col = +m[1] - 1;
+          stepTitle = `Column ${m[1]}`;
+          const v = matFromRows('[A | B]', cur.rows);
+          v.cells = withStates(v.cells, cur.rows.map((_, i) => [i, col, i === col ? 'pivot' : 'target']));
+          lastVisual = [v];
+          ctx.push({ group: stepTitle, short: `Column ${m[1]}: goal`, title: `Column ${m[1]}: the pivot is row ${m[1]}`, titleHTML: `Column ${m[1]}: the pivot is row ${m[1]}, column ${m[1]}`, visual: lastVisual, note: NOTE.gjCol });
+        } else if (/^FINAL MATRIX/.test(t.text)) stepTitle = 'Final matrix';
+        else if (/^FINAL SUBSTITUTION/.test(t.text)) {
+          const items = [];
+          for (let q = k + 1; q < T.length && T[q].t === 'entry'; q++) items.push(mathHTML(T[q].text, names));
+          ctx.push({ group: 'Final matrix', short: 'Read the answer', title: 'Read each row of [I | X]', visual: [lastVisual[0], { k: 'list', items }].filter(Boolean), note: 'Each row now says 1 × unknown = number.' });
+        }
+        continue;
+      }
+      if (t.t === 'line' && /^The pivot is already 1/.test(t.text) && cur) {
+        const v = matFromRows('[A | B]', cur.rows);
+        v.cells = withStates(v.cells, [[col, col, 'pivot']]);
+        ctx.push({ group: stepTitle, short: 'Pivot already 1', title: 'The pivot is already 1', visual: [v], note: NOTE.gjSkip });
+        continue;
+      }
+      if (t.t === 'op') {
+        const res = T[k + 1] && T[k + 1].t === 'mat' ? T[k + 1] : null;
+        if (!res || !cur) continue;
+        const before = cur, after = res;
+        let mNorm = /^R(\d+) <- R\1 \/ \((.+)\)$/.exec(t.op);
+        let mElim = /^R(\d+) <- R\1 ([+-]) \((.+)\)R(\d+)$/.exec(t.op);
+        let mSwap = /^R(\d+) <-> R(\d+)$/.exec(t.op);
+        const changed = [];
+        const srcRows = [];
+        let note = '', calc = null;
+        if (mNorm) {
+          const r = +mNorm[1] - 1; changed.push(r);
+          calc = [{ html: true, lhs: `R${r + 1}`, lines: [`${rowHTML(before.rows[r])} &divide; ${num(mNorm[2])}`], result: rowHTML(after.rows[r]) }];
+          note = NOTE.gjNorm;
+        } else if (mElim) {
+          const r = +mElim[1] - 1, s = +mElim[4] - 1; changed.push(r); srcRows.push(s);
+          calc = [{ html: true, lhs: `R${r + 1}`, lines: [`${rowHTML(before.rows[r])} ${mElim[2] === '+' ? '+' : '&minus;'} ${num(mElim[3])} &times; ${rowHTML(before.rows[s])}`], result: rowHTML(after.rows[r]) }];
+          note = NOTE.gjElim;
+        } else if (mSwap) {
+          changed.push(+mSwap[1] - 1, +mSwap[2] - 1);
+          note = NOTE.gjSwap;
+        }
+        const bv = matFromRows('Before', before.rows);
+        bv.cells = withStates(bv.cells, [].concat(...srcRows.map((s) => bv.cells[s].map((_, j) => [s, j, 'ref'])), ...changed.map((r) => bv.cells[r].map((_, j) => [r, j, 'from']))));
+        const av = matFromRows('After', after.rows);
+        av.cells = withStates(av.cells, [].concat(...changed.map((r) => av.cells[r].map((_, j) => [r, j, 'cur'])), [[col, col, 'pivot']]));
+        lastVisual = [av];
+        ctx.push({ group: stepTitle, short: t.op.replace('<->', '↔').replace('<-', '←'), title: `Step ${t.step}: ${t.op}`, titleHTML: `Step ${t.step}: ${mathHTML(t.op, names).replace(/\((-?[\d.]+)\)R/, '($1)·R')}`, kicker: t.why, visual: [bv, { k: 'op', text: '→' }, av], calc, reveal: !mSwap, note });
+        cur = after;
+        k++;
+        continue;
+      }
+      if (t.t === 'mat' && t.label === '[I | X]') {
+        lastVisual = [matFromRows('[I | X]', t.rows)];
+        lastVisual[0].cells = lastVisual[0].cells.map((r) => r.map((c, j) => ({ v: c.v, s: j === r.length - 1 ? 'known ans' : 'known' })));
+        ctx.push({ group: 'Final matrix', short: '[I | X]', title: 'The final matrix [I | X]', visual: lastVisual, note: NOTE.gjFinal });
+        cur = t;
+      }
+    }
+  }
+
+  // ---- Gauss-Seidel / Gauss-Jacobi
+  function buildIter(ctx) {
+    const { T, names, method } = ctx;
+    const seidel = method === 'seidel';
+    let phase = 0, stepTitle = '', formulas = [], settings = null, table = null, domRows = [], lastVisual = [];
+    for (let k = 0; k < T.length; k++) {
+      const t = T[k];
+      if (t.t === 'sub') { const m = /^STEP (\d+): (.*?)(?:\s{2}\(.*\))?$/.exec(t.text); phase = m ? +m[1] : 99; if (m) stepTitle = `Step ${m[1]} · ${m[2]}`; continue; }
+      if (t.t === 'callout' && t.kind === 'error') { errorFrame(ctx, t, lastVisual); continue; }
+      if (phase === 1) {
+        if (t.t === 'entry') {
+          const m = /^Row (\d+):\s+\|(\S+)\| = (\S+)\s+vs\s+(.*?) = (\S+)\s+->\s+(.*)$/.exec(t.text);
+          if (!m) continue;
+          domRows.push({ row: m[1], dsym: m[2], d: m[3], osym: m[4], o: m[5], ok: /OK/.test(m[6]) });
+          const visual = [{ k: 'dom', rows: clone(domRows), cur: domRows.length - 1 }];
+          lastVisual = visual;
+          ctx.push({ group: stepTitle, short: `Row ${m[1]}`, title: `Row ${m[1]}: is the diagonal the biggest?`, visual, reveal: true, note: NOTE.dom });
+        } else if (t.t === 'callout') {
+          ctx.push({ group: stepTitle, short: 'Verdict', title: t.kind === 'ok' ? 'The method will converge' : 'Convergence is not guaranteed', visual: [{ k: 'dom', rows: clone(domRows), cur: -1 }, { k: 'msg', kind: t.kind, text: t.text }], note: NOTE.dom });
+        }
+        continue;
+      }
+      if (phase === 2) {
+        if (t.t === 'entry') formulas.push(t.text);
+        if (t.t === 'settings') {
+          settings = t.lines;
+          ctx.push({ group: stepTitle, short: 'Formulas', title: 'Solve each equation for its diagonal unknown', visual: [{ k: 'iterf', lines: formulas, seidel }], note: NOTE.formulas + (seidel ? ' In Gauss-Seidel, unknowns already updated in this iteration carry (k+1).' : ' In Gauss-Jacobi, every right side uses (k).') });
+        }
+        continue;
+      }
+      if (phase === 3 && t.t === 'table') {
+        table = t;
+        const nVals = names.length;
+        const errLabel = /Ea%/.test(t.head.join(' ')) ? 'Ea%' : 'Ea';
+        ctx.push({ group: 'Step 3 · Iterations', short: 'Iteration 0', title: 'Start: the initial guess', visual: [{ k: 'itable', head: t.head, rows: t.rows.slice(0, 1), cur: 0 }, { k: 'small', lines: settings || [] }], note: NOTE.start });
+        const parsedF = formulas.map((f) => { const m = /^(\S+?)\(k\+1\) = (.*)$/.exec(f); return m ? { name: m[1], rhs: m[2] } : null; }).filter(Boolean);
+        for (let r = 1; r < t.rows.length; r++) {
+          const row = t.rows[r], prev = t.rows[r - 1];
+          const valNew = (nm) => row[1 + names.indexOf(nm)];
+          const valOld = (nm) => prev[1 + names.indexOf(nm)];
+          const calc = parsedF.map((pf) => {
+            const re = new RegExp(`(?<![A-Za-z0-9_])(${names.map(reEsc).join('|')})\\((k\\+1|k)\\)`, 'g');
+            let shown = '', hidden = '', last = 0, m;
+            while ((m = re.exec(pf.rhs))) {
+              const before = mathHTML(pf.rhs.slice(last, m.index), []);
+              shown += before; hidden += before;
+              if (m[2] === 'k+1') {
+                shown += `<span class="v-new">(${num(valNew(m[1]))})</span>`;
+                hidden += `<span class="v-new">${mathHTML(m[1], names)}<sup>(${r})</sup></span>`;
+              } else {
+                const o = `<span class="v-old">(${num(valOld(m[1]))})</span>`;
+                shown += o; hidden += o;
+              }
+              last = re.lastIndex;
+            }
+            const tail = mathHTML(pf.rhs.slice(last), []);
+            return { html: true, lhs: `${mathHTML(pf.name, names)}<sup>(${r})</sup>`, lines: [shown + tail], linesHidden: [hidden + tail], result: num(valNew(pf.name)) };
+          });
+          const visual = [{ k: 'itable', head: t.head, rows: t.rows.slice(0, r + 1), cur: r, errLabel, nVals }];
+          lastVisual = visual;
+          ctx.push({ group: 'Step 3 · Iterations', short: `Iteration ${r}`, title: `Iteration ${r}`, visual, calc, calcFirst: true, reveal: true, note: (seidel ? NOTE.iterSeidel : NOTE.iterJacobi) + ' ' + NOTE.errCol });
+        }
+        continue;
+      }
+      if (phase === 3 && t.t === 'callout') {
+        ctx.push({ group: 'Step 3 · Iterations', short: t.kind === 'ok' ? 'Converged' : t.kind === 'err' ? 'Diverged' : 'Stopped', title: t.kind === 'ok' ? 'Stop: the answers have settled' : t.kind === 'err' ? 'The iterations diverge' : 'Stopped at the iteration limit', visual: [lastVisual[0], { k: 'msg', kind: t.kind, text: t.text }].filter(Boolean), note: t.kind === 'err' ? 'Values grow without limit. Rearrange the equations to make them diagonally dominant, or use a direct method.' : NOTE.errCol });
+      }
+    }
+  }
+
+  const api = { build, tokenize, mathHTML };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.LSSLecture = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* Lecture mode screen: shows the slides built by lecture.js, one step at a time. */
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const num = (s) => esc(s).replace(/^-/, '&minus;');
+  const icon = (id) => `<svg class="ic" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+  const M = (s) => LSSLecture.mathHTML(s, names);
+  const PREF = 'lss-lecture-prefs-v1';
+
+  let deck = null, names = [], pos = 0, revealed = false, lastFocus = null;
+  const prefs = { pause: true, notes: true, outline: true, scale: 1 };
+  try { Object.assign(prefs, JSON.parse(localStorage.getItem(PREF) || '{}')); } catch (e) { /* no storage */ }
+  const savePrefs = () => { try { localStorage.setItem(PREF, JSON.stringify(prefs)); } catch (e) { /* no storage */ } };
+
+  const el = $('lec'), stage = $('lec-stage');
+
+  // ------------------------------------------------------------ visuals
+  const STATE_LABEL = { cur: 'Being computed', ref: 'Used in this step', col: 'Replaced column', pivot: 'Pivot', target: 'To become 0', from: 'Row before the change', ans: 'Answer' };
+  function matHTML(v, hidden) {
+    const cols = v.cells[0].length;
+    let cells = '';
+    v.cells.forEach((row) => row.forEach((c, j) => {
+      const cls = ['c'].concat(c.s.split(' ')).concat(v.aug && j === v.aug ? ['aug'] : []).join(' ');
+      const isCur = /\bcur\b/.test(c.s);
+      const val = isCur && hidden ? '?' : c.v;
+      cells += `<span class="${cls}">${val ? num(val) : ''}</span>`;
+    }));
+    const nm = v.names ? `<div class="lm-names">${v.names.map((x) => `<span>${M(x)}</span>`).join('')}</div>` : '';
+    const lm = /^\[A_(.+)\]$/.exec(v.label);
+    const label = lm ? `[A<sub>${M(lm[1])}</sub>]` : M(v.label);
+    return `<figure class="lm"><figcaption>${label}</figcaption><div class="lm-wrap"><div class="lm-body" style="--cols:${cols}">${cells}</div>${nm}</div></figure>`;
+  }
+  function iterLineHTML(line) {
+    const m = /^(\S+?)\(k\+1\) = (.*)$/.exec(line);
+    if (!m) return M(line);
+    const re = new RegExp(`(?<![A-Za-z0-9_])(${names.map(reEsc).join('|')})\\((k\\+1|k)\\)`, 'g');
+    let out = '', last = 0, t;
+    while ((t = re.exec(m[2]))) {
+      out += LSSLecture.mathHTML(m[2].slice(last, t.index), []);
+      out += `<span class="${t[2] === 'k+1' ? 'v-new' : 'v-old'}">${M(t[1])}<sup>(${t[2]})</sup></span>`;
+      last = re.lastIndex;
+    }
+    out += LSSLecture.mathHTML(m[2].slice(last), []);
+    return `<span class="v-new">${M(m[1])}<sup>(k+1)</sup></span> = ${out}`;
+  }
+  function visualHTML(v, hidden) {
+    switch (v.k) {
+      case 'mat': return matHTML(v, hidden);
+      case 'op': return `<div class="lop" aria-hidden="true">${esc(v.text)}</div>`;
+      case 'eqs': return `<ol class="leqs">${v.eqs.map((e) => `<li>${M(e)}</li>`).join('')}</ol>`;
+      case 'idea': return `<p class="lidea">${esc(v.text)}</p>`;
+      case 'formulas': return `<div class="lformulas">${v.lines.map((l) => `<div>${M(l)}</div>`).join('')}</div>`;
+      case 'iterf': return `<div class="lformulas big">${v.lines.map((l) => `<div>${iterLineHTML(l)}</div>`).join('')}</div>`;
+      case 'small': return v.lines.length ? `<div class="lsmall">${v.lines.map((l) => `<div>${M(l)}</div>`).join('')}</div>` : '';
+      case 'list': return `<div class="lformulas">${v.items.map((h) => `<div>${h}</div>`).join('')}</div>`;
+      case 'msg': {
+        const ic = { ok: 'ok', warn: 'warn', err: 'err', error: 'err', info: 'info' }[v.kind] || 'info';
+        return `<div class="msg ${v.kind === 'error' ? 'err' : v.kind} lmsg">${icon(ic)}<div>${esc(v.text)}</div></div>`;
+      }
+      case 'tiles': return `<div class="ltiles">${v.items.map((t) => `<div class="ltile"><div class="k">${M(t.name)}</div><div class="v">${hidden ? '?' : num(t.v)}</div></div>`).join('')}</div>`;
+      case 'frac': return `<div class="lfrac"><div class="ft"><span class="fl">${M(v.topLabel)}</span><span class="fv">${num(v.top)}</span></div><div class="fbar"></div><div class="fb"><span class="fl">${M(v.botLabel)}</span><span class="fv">${num(v.bot)}</span></div></div>`;
+      case 'dom': {
+        const rows = v.rows.map((r, i) => {
+          const cur = i === v.cur;
+          const verdict = cur && hidden ? '?' : (r.ok ? `${icon('ok')} bigger` : `${icon('err')} not bigger`);
+          return `<tr class="${cur ? 'cur' : ''}"><th scope="row">Row ${esc(r.row)}</th><td>|${M(r.dsym)}| = ${num(r.d)}</td><td class="vs">vs</td><td>${M(r.osym)} = ${num(r.o)}</td><td class="verdict ${cur && hidden ? '' : r.ok ? 'ok' : 'bad'}">${verdict}</td></tr>`;
+        }).join('');
+        return `<div class="ltable-wrap"><table class="ltable ldom"><tbody>${rows}</tbody></table></div>`;
+      }
+      case 'itable': {
+        const th = v.head.map((h, j) => {
+          const m = /^(Ea%?)\((.*)\)$/.exec(h);
+          const lab = j === 0 ? '<var>k</var>' : m ? `${m[1] === 'Ea%' ? '&epsilon;<sub>a</sub>%' : '&epsilon;<sub>a</sub>'} ${M(m[2])}` : M(h);
+          return `<th scope="col"${j === names.length + 1 ? ' class="sep"' : ''}>${lab}</th>`;
+        }).join('');
+        const body = v.rows.map((r, i) => {
+          const cur = i === v.cur;
+          return `<tr class="${cur ? 'cur' : ''}">${r.map((c, j) => `<td class="${j > names.length ? 'e' : ''}${j === names.length + 1 ? ' sep' : ''}">${cur && hidden && j > 0 ? '?' : num(c)}</td>`).join('')}</tr>`;
+        }).join('');
+        return `<div class="ltable-wrap scroll" data-autoscroll="1"><table class="ltable"><thead><tr>${th}</tr></thead><tbody>${body}</tbody></table></div>`;
+      }
+      default: return '';
+    }
+  }
+  function legendHTML(visual) {
+    const seen = new Set();
+    visual.forEach((v) => { if (v.cells) v.cells.forEach((r) => r.forEach((c) => c.s.split(' ').forEach((s) => { if (STATE_LABEL[s]) seen.add(s); }))); });
+    if (!seen.size) return '';
+    return `<div class="llegend">${[...seen].map((s) => `<span><i class="sw ${s}"></i>${STATE_LABEL[s]}</span>`).join('')}</div>`;
+  }
+  function calcHTML(calc, hidden) {
+    const rows = calc.map((c) => {
+      const lhs = c.html ? c.lhs : M(c.lhs);
+      const steps = c.html ? (hidden && c.linesHidden ? c.linesHidden : c.lines) : c.steps.map(M);
+      const res = hidden ? '<span class="lq">?</span>' : `<span class="lres">${c.html ? c.result : num(c.result)}</span>`;
+      if (calc.length > 1) return `<div class="lc-row compact"><span class="lc-lhs">${lhs}</span><span class="lc-eq">=</span><span class="lc-rhs">${steps.join(' = ')} <span class="lc-eq">=</span> ${res}</span></div>`;
+      const lines = steps.concat([res]);
+      return lines.map((s, k) => `<div class="lc-row"><span class="lc-lhs">${k === 0 ? lhs : ''}</span><span class="lc-eq">=</span><span class="lc-rhs">${s}</span></div>`).join('');
+    }).join('');
+    return `<div class="lcalc${calc.length > 1 ? ' multi' : ''}">${rows}</div>`;
+  }
+
+  // ------------------------------------------------------------ render
+  const isHidden = () => { const f = deck.frames[pos]; return prefs.pause && f.reveal && !revealed; };
+  function render() {
+    const f = deck.frames[pos];
+    const hidden = isHidden();
+    const N = deck.frames.length;
+    $('lec-count').textContent = `Step ${pos + 1} of ${N}`;
+    $('lec-fill').style.width = `${((pos + 1) / N) * 100}%`;
+    $('lec-group').textContent = f.group;
+    $('lec-title').innerHTML = f.titleHTML || esc(f.title);
+    $('lec-kicker').textContent = f.kicker ? f.kicker.charAt(0).toUpperCase() + f.kicker.slice(1) : '';
+    $('lec-kicker').hidden = !f.kicker;
+    const visual = f.visual.filter(Boolean);
+    const vis = visual.map((v) => visualHTML(v, hidden)).join('');
+    const calc = f.calc ? calcHTML(f.calc, hidden) : '';
+    $('lec-visual').innerHTML = (f.calcFirst ? '' : `<div class="lvis">${vis}</div>${legendHTML(visual)}`) + calc + (f.calcFirst ? `<div class="lvis">${vis}</div>` : '');
+    $('lec-note').innerHTML = f.note ? `${icon('idea')}<p>${esc(f.note)}</p>` : '';
+    $('lec-note').hidden = !prefs.notes || !f.note;
+    const nextBtn = $('lec-next');
+    nextBtn.innerHTML = hidden ? `${icon('eye')}<span>Show answer</span>` : pos === N - 1 ? '<span>Finish</span>' : `<span>Next</span>${icon('chev-r')}`;
+    nextBtn.classList.toggle('reveal', hidden);
+    $('lec-prev').disabled = pos === 0;
+    $('lec-hint').textContent = hidden ? 'Ask the class first, then press Next (→) to show the answer' : '← → or Space to move · R pauses before answers · F full screen';
+    el.querySelectorAll('.lo-item').forEach((b) => { const on = +b.dataset.i === pos; b.classList.toggle('on', on); b.setAttribute('aria-current', on ? 'step' : 'false'); if (on) b.scrollIntoView({ block: 'nearest' }); });
+    el.querySelectorAll('[data-autoscroll]').forEach((w) => { w.scrollTop = w.scrollHeight; });
+    stage.scrollTop = 0;
+    syncTools();
+  }
+  function renderOutline() {
+    let html = '', g = null;
+    deck.frames.forEach((f, i) => {
+      if (f.group !== g) { if (g !== null) html += '</ol>'; g = f.group; html += `<div class="lo-group">${esc(g)}</div><ol>`; }
+      html += `<li><button type="button" class="lo-item" data-i="${i}"><span class="lo-n">${i + 1}</span><span class="lo-t">${M(f.short || f.title)}</span></button></li>`;
+    });
+    $('lec-outline-list').innerHTML = html + '</ol>';
+  }
+  function syncTools() {
+    el.classList.toggle('no-outline', !prefs.outline);
+    el.style.setProperty('--ls', prefs.scale);
+    $('lec-t-pause').setAttribute('aria-pressed', String(prefs.pause));
+    $('lec-t-pause').innerHTML = icon(prefs.pause ? 'eye-off' : 'eye');
+    $('lec-t-notes').setAttribute('aria-pressed', String(prefs.notes));
+    $('lec-t-outline').setAttribute('aria-pressed', String(prefs.outline));
+  }
+
+  // ------------------------------------------------------------ navigation
+  function next() {
+    if (isHidden()) { revealed = true; render(); return; }
+    if (pos < deck.frames.length - 1) { pos++; revealed = false; render(); } else close();
+  }
+  function prev() { if (pos > 0) { pos--; revealed = true; render(); } }
+  function go(i) { pos = Math.max(0, Math.min(deck.frames.length - 1, i)); revealed = false; render(); if (window.innerWidth < 900) { prefs.outline = false; syncTools(); } }
+
+  function open() {
+    const last = window.__lssLast;
+    if (!last || !last.data || !last.data.text) return;
+    names = last.req.names;
+    deck = LSSLecture.build(last.data.text, last.req);
+    if (!deck.frames.length) return;
+    pos = 0; revealed = false;
+    if (window.innerWidth < 900) prefs.outline = false;
+    $('lec-code').textContent = deck.code;
+    $('lec-method').textContent = $('lec-method').dataset.name = deck.title.toLowerCase().replace(/(^|[\s-])([a-z])/g, (m, a, b) => a + b.toUpperCase()).replace(/'S\b/g, "'s");
+    renderOutline();
+    lastFocus = document.activeElement;
+    el.hidden = false;
+    document.documentElement.classList.add('lec-open');
+    render();
+    el.focus();
+  }
+  function close() {
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    el.hidden = true;
+    document.documentElement.classList.remove('lec-open');
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  function fullscreen() {
+    if (document.fullscreenElement) { document.exitFullscreen().catch(() => {}); return; }
+    if (el.requestFullscreen) el.requestFullscreen().catch(() => { $('lec-hint').textContent = 'Full screen is not available here. Use your browser’s full-screen key (F11).'; });
+  }
+
+  $('lec-next').addEventListener('click', next);
+  $('lec-prev').addEventListener('click', prev);
+  $('lec-close').addEventListener('click', close);
+  $('lec-t-full').addEventListener('click', fullscreen);
+  $('lec-t-pause').addEventListener('click', () => { prefs.pause = !prefs.pause; revealed = false; savePrefs(); render(); });
+  $('lec-t-notes').addEventListener('click', () => { prefs.notes = !prefs.notes; savePrefs(); render(); });
+  $('lec-t-outline').addEventListener('click', () => { prefs.outline = !prefs.outline; savePrefs(); syncTools(); });
+  $('lec-t-smaller').addEventListener('click', () => { prefs.scale = Math.max(0.7, +(prefs.scale - 0.1).toFixed(2)); savePrefs(); syncTools(); });
+  $('lec-t-larger').addEventListener('click', () => { prefs.scale = Math.min(1.8, +(prefs.scale + 0.1).toFixed(2)); savePrefs(); syncTools(); });
+  $('lec-outline-list').addEventListener('click', (e) => { const b = e.target.closest('.lo-item'); if (b) go(+b.dataset.i); });
+  document.addEventListener('fullscreenchange', () => { $('lec-t-full').innerHTML = icon(document.fullscreenElement ? 'fs-min' : 'fs-max'); });
+  el.addEventListener('keydown', (e) => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    const k = e.key;
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(k)) { if (k === 'Enter' && e.target.closest('button')) return; e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); prev(); }
+    else if (k === 'Home') { e.preventDefault(); go(0); }
+    else if (k === 'End') { e.preventDefault(); go(deck.frames.length - 1); }
+    else if (k === 'Escape' && !document.fullscreenElement) { e.preventDefault(); close(); }
+    else if (k === 'r' || k === 'R') $('lec-t-pause').click();
+    else if (k === 'n' || k === 'N') $('lec-t-notes').click();
+    else if (k === 'o' || k === 'O') $('lec-t-outline').click();
+    else if (k === 'f' || k === 'F') fullscreen();
+    else if (k === '+' || k === '=') $('lec-t-larger').click();
+    else if (k === '-' || k === '_') $('lec-t-smaller').click();
+  });
+  let tx = null;
+  stage.addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchend', (e) => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 60) (dx < 0 ? next : prev)(); });
+
+  const openBtn = $('btn-lecture');
+  openBtn.addEventListener('click', open);
+  window.addEventListener('lss:result', (e) => { openBtn.disabled = !(e.detail && e.detail.data && e.detail.data.text); });
+  window.LSSLectureUI = { open, close, next, prev, go, state: () => ({ pos, revealed, n: deck ? deck.frames.length : 0, hidden: deck ? isHidden() : false }) };
+})();
+
 </script>
 </body>
 </html>
